@@ -1,18 +1,26 @@
-"use client"
-import { Button } from "@/components/ui/button";
-import { ModeToggle } from "@/components/ui/mode-toggle";
-import { useRouter } from "next/navigation";
+'use client';
+
+import Auth from "../../auth";
+import { auth } from "../../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Home() {
-  const router = useRouter();
-  const goToHomePage = ()=>{
-    router.push("/home")
+  const [user, loading] = useAuthState(auth);
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 text-9xl bg-sidebar-accent">
-      egghead
-      <Button onClick={goToHomePage}>home</Button>
-      <ModeToggle/>
+    <div>
+      {user ? (
+        <div>
+          <p>Welcome, {user.displayName}</p>
+          <Auth />
+        </div>
+      ) : (
+        <Auth />
+      )}
     </div>
   );
 }
