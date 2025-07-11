@@ -14,7 +14,7 @@ export default function Auth() {
   };
   return (
     <div>
-      <Button variant={"outline"} onClick={signInWithGoogle}>Sign in with Google</Button>
+      <Button variant={"outline"} onClick={signInWithGoogle}>Sign in</Button>
     </div>
   );
 }

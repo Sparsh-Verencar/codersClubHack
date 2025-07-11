@@ -74,11 +74,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Auth Screen */}
-      <Auth />
 
-      {/* Theme Toggle
-      <div className="absolute top-4 right-4 z-50">
+
+      <div className="absolute top-4 right-4 z-50 flex items-center justify-center">
+        <Auth />
         <ModeToggle />
       </div>
 
@@ -137,7 +136,7 @@ export default function HomePage() {
         <p className="mt-6 text-xs text-muted-foreground">
           &copy; {new Date().getFullYear()} FestivalSphere. All rights reserved.
         </p>
-      </footer> 
+      </footer>
     </div>
   );
 }
