@@ -1,13 +1,12 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import Navbar from '@/components/Navbar';
 import L from 'leaflet';
 
-// Use Leaflet’s default marker icon
 const customIcon = new L.Icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   iconSize: [25, 41],
@@ -17,8 +16,7 @@ const customIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-// Hardcoded festival data (add descriptions as needed)
-const festivalData = [
+const hardcodedFestivalData = [
   { id: 1, name: 'Holi', date: '2025-07-11', coords: [28.6139, 77.2090], image: 'https://source.unsplash.com/200x150/?holi', description: 'Festival of colors in India.' },
   { id: 2, name: 'Diwali', date: '2025-11-02', coords: [19.0760, 72.8777], image: 'https://source.unsplash.com/200x150/?diwali', description: 'Festival of lights celebrated across India.' },
   { id: 3, name: 'Oktoberfest', date: '2025-10-03', coords: [48.1351, 11.5820], image: 'https://source.unsplash.com/200x150/?oktoberfest', description: 'Beer festival in Munich, Germany.' },
@@ -26,52 +24,147 @@ const festivalData = [
   { id: 5, name: 'Songkran', date: '2025-04-13', coords: [13.7563, 100.5018], image: 'https://source.unsplash.com/200x150/?songkran', description: 'Thai New Year water festival.' },
 ];
 
-export default function SectionMap() {
-  const [date, setDate] = React.useState(null);
-  const [markers, setMarkers] = React.useState([]);
-  const [selectedFestival, setSelectedFestival] = React.useState(null);
+export default function FestivalCalendar() {
+  const [date, setDate] = useState(null);
+  const [festivals, setFestivals] = useState([]);
+  const [selectedFestival, setSelectedFestival] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  React.useEffect(() => {
-    if (!date) {
-      setMarkers([]);
+  const getRandomCoordinates = () => {
+    const lat = Math.random() * 160 - 80;
+    const lng = Math.random() * 360 - 180;
+    return [lat, lng];
+  };
+
+  const getFestivalImage = (name) => {
+    if (!name) return 'https://source.unsplash.com/200x150/?festival';
+    return `https://source.unsplash.com/200x150/?${encodeURIComponent(name.split(' ')[0])}`;
+  };
+
+  const fetchFromHolidayAPI = async (year, month, day) => {
+    try {
+      const res = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/US`);
+      const list = await res.json();
+      return list
+        .filter(h => {
+          const d = new Date(h.date);
+          return d.getFullYear() === year && d.getMonth() + 1 === month && d.getDate() === day;
+        })
+        .map(h => ({
+          id: `holiday-${h.date}`,
+          name: h.name,
+          date: h.date,
+          coords: getRandomCoordinates(),
+          description: h.localName || '',
+          image: getFestivalImage(h.name),
+        }));
+    } catch (err) {
+      console.error("Holiday API error:", err);
+      return [];
+    }
+  };
+
+  const fetchFromWikipedia = async (monthName, day, year) => {
+    try {
+      const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/html/${monthName}_${day}`);
+      const html = await res.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const heading = Array.from(doc.querySelectorAll('h2')).find(h =>
+        /Holidays and observances/i.test(h.textContent || '')
+      );
+
+      if (!heading) return [];
+
+      const items = [];
+      let sib = heading.nextElementSibling;
+      while (sib && !/^H[2-3]$/.test(sib.tagName)) {
+        if (sib.tagName === 'UL') {
+          Array.from(sib.querySelectorAll('li')).forEach(li => {
+            const name = li.textContent.split(/[;(\[]/)[0].trim();
+            const desc = li.textContent.trim();
+            const date = `${year}-${String(new Date(`${monthName} 1`).getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            items.push({
+              id: `wiki-${monthName}-${day}-${items.length}`,
+              name,
+              date,
+              coords: getRandomCoordinates(),
+              description: desc,
+              image: getFestivalImage(name),
+            });
+          });
+        }
+        sib = sib.nextElementSibling;
+      }
+
+      return items;
+    } catch (err) {
+      console.error("Wikipedia error:", err);
+      return [];
+    }
+  };
+
+  const fetchFestivals = async (selectedDate) => {
+    if (!selectedDate) return;
+    setLoading(true);
+
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth() + 1;
+    const day = selectedDate.getDate();
+    const monthName = selectedDate.toLocaleDateString('en-US', { month: 'long' });
+    const isoDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+    const hardcoded = hardcodedFestivalData.filter(f => f.date === isoDate);
+    if (hardcoded.length > 0) {
+      setFestivals(hardcoded);
+      setLoading(false);
       return;
     }
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const dd = String(date.getDate()).padStart(2, '0');
-    const formatted = `${yyyy}-${mm}-${dd}`;
-    setMarkers(festivalData.filter(f => f.date === formatted));
-  }, [date]);
+
+    const [api, wiki] = await Promise.all([
+      fetchFromHolidayAPI(year, month, day),
+      fetchFromWikipedia(monthName, day, year)
+    ]);
+
+    const combined = [...api, ...wiki];
+    const unique = combined.filter((f, i, arr) =>
+      i === arr.findIndex(o => o.name.toLowerCase() === f.name.toLowerCase())
+    );
+
+    const fallback = unique.length > 0 ? unique : [{
+      id: 'none',
+      name: 'No major festivals found',
+      date: isoDate,
+      coords: [20.5937, 78.9629],
+      description: 'Check back later or try another date.',
+      image: 'https://source.unsplash.com/200x150/?calendar'
+    }];
+
+    setFestivals(fallback);
+    setLoading(false);
+  };
+
+  const handleDateSelect = (selected) => {
+    setDate(selected);
+    fetchFestivals(selected);
+  };
 
   return (
     <>
       <Navbar />
 
-      {/* Map & Calendar Section */}
-      <section id="section-map" className="flex flex-col md:flex-row w-full p-2 h-[60vh] overflow-hidden">
-        {/* Calendar Panel */}
-        <div className="w-full md:w-1/3 p-4 shadow-md flex justify-center items-center overflow-auto">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            className="w-[90%] max-w-[300px] h-auto max-h-full"
-          />
+      {/* Calendar + Map */}
+      <section className="flex flex-col md:flex-row h-[60vh]">
+        <div className="md:w-1/3 p-4">
+          <Calendar selected={date} onSelect={handleDateSelect} mode="single" />
         </div>
-
-        {/* Map Panel */}
-        <div className="w-full md:w-2/3 h-1/2 md:h-full relative">
-          <MapContainer
-            center={[20.5937, 78.9629]}
-            zoom={4}
-            scrollWheelZoom
-            style={{ height: '100%', width: '100%' }}
-          >
-<TileLayer
-  url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-  attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap contributors'
-/>
-            {markers.map(f => (
+        <div className="md:w-2/3">
+          <MapContainer center={[20.5937, 78.9629]} zoom={4} style={{ height: '100%' }}>
+            <TileLayer
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap contributors'
+            />
+            {festivals.map(f => (
               <Marker key={f.id} position={f.coords} icon={customIcon}>
                 <Popup>{f.name}</Popup>
               </Marker>
@@ -80,60 +173,56 @@ export default function SectionMap() {
         </div>
       </section>
 
-      {/* Featured Festivals Grid */}
-      <section className="w-full p-4 bg-gray-200">
-        <h2 className="text-xl font-semibold mb-3 text-black">Featured Festivals</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {festivalData.map(f => (
-            <div
-              key={f.id}
-              onClick={() => setSelectedFestival(f)}
-              className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-xl transition"
-            >
-              <img src={f.image} alt={f.name} className="w-full h-32 object-cover" />
-              <div className="p-2">
-                <h3 className="text-base font-bold">{f.name}</h3>
-                <p className="text-xs text-gray-600">{f.date}</p>
+      {/* Festival Cards */}
+      <section className="p-4 bg-gray-200">
+        <h2 className="text-xl font-semibold mb-4">
+          {date ? `Festivals on ${date.toLocaleDateString()}` : 'Select a date'}
+        </h2>
+
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {festivals.map(f => (
+              <div
+                key={f.id}
+                onClick={() => setSelectedFestival(f)}
+                className="bg-white rounded-lg shadow cursor-pointer hover:shadow-xl"
+              >
+                <img src={f.image} alt={f.name} className="w-full h-32 object-cover" />
+                <div className="p-3">
+                  <h3 className="text-lg font-bold">{f.name}</h3>
+                  <p className="text-sm text-gray-600">Date: {f.date}</p>
+                  <p className="text-sm text-gray-600">Location: {f.coords.join(', ')}</p>
+                  <p className="text-sm text-gray-800 mt-1">{f.description}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Modal Overlay (20% black) */}
+      {/* Modal */}
       {selectedFestival && (
-  <div
-    className="fixed inset-0 bg-black/20 flex items-center justify-center z-[1000]"
-    onClick={() => setSelectedFestival(null)}
-  >
-    <div
-      className="bg-white rounded-2xl p-8 max-w-5xl w-11/12 max-h-[90vh] overflow-y-auto relative shadow-2xl"
-      onClick={e => e.stopPropagation()}
-    >
-      <button
-        onClick={() => setSelectedFestival(null)}
-        className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl"
-      >
-        ✕
-      </button>
-
-      <img
-        src={selectedFestival.image}
-        alt={selectedFestival.name}
-        className="w-full h-72 object-cover rounded-lg mb-6"
-      />
-      <h3 className="text-3xl font-bold mb-4">{selectedFestival.name}</h3>
-      <p className="text-base text-gray-600 mb-2">
-        Date: <strong>{selectedFestival.date}</strong>
-      </p>
-      <p className="text-base text-gray-600 mb-6">
-        Location: <strong>{selectedFestival.coords.join(', ')}</strong>
-      </p>
-      <p className="text-lg text-gray-700">{selectedFestival.description}</p>
-    </div>
-  </div>
-)}
-
+        <div
+          className="fixed inset-0 bg-black/20 flex justify-center items-center z-50"
+          onClick={() => setSelectedFestival(null)}
+        >
+          <div
+            className="bg-white rounded-xl p-6 max-w-2xl w-11/12 shadow-lg relative"
+            onClick={e => e.stopPropagation()}
+          >
+            <button className="absolute top-4 right-4 text-2xl" onClick={() => setSelectedFestival(null)}>
+              ✕
+            </button>
+            <img src={selectedFestival.image} alt={selectedFestival.name} className="w-full h-64 object-cover rounded mb-4" />
+            <h2 className="text-2xl font-bold mb-2">{selectedFestival.name}</h2>
+            <p><strong>Date:</strong> {selectedFestival.date}</p>
+            <p><strong>Location:</strong> {selectedFestival.coords.join(', ')}</p>
+            <p className="mt-2">{selectedFestival.description}</p>
+          </div>
+        </div>
+      )}
     </>
   );
 }
