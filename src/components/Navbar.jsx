@@ -1,5 +1,4 @@
 "use client";
-
 import React from 'react';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { Button } from './ui/button';
@@ -16,7 +15,7 @@ const Navbar = () => {
       await signOut(auth);
       router.push("/");
     } catch (err) {
-      console.error(err);
+      console.error('Logout failed:', err);
     }
   };
 
