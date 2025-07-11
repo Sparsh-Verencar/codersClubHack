@@ -20,7 +20,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-[90vw] h-[10vh] bg-background text-foreground border border-border rounded-2xl m-5 px-6 flex items-center justify-between shadow-md">
+    <div className="w-[100vw] h-[10vh] bg-background text-foreground border border-border rounded-2xl px-6 flex items-center justify-between shadow-md">
       
       {/* Left Section - Logo and Profile */}
       <div className="flex items-center gap-4">

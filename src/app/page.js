@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect } from "react";
 import Auth from "../../auth";
@@ -74,11 +74,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Auth Screen */}
-      <Auth />
 
-      {/* Theme Toggle */}
-      <div className="absolute top-4 right-4 z-50">
+
+      <div className="absolute top-4 right-4 z-50 flex items-center justify-center">
+        <Auth />
         <ModeToggle />
       </div>
 
