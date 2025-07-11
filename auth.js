@@ -13,18 +13,9 @@ export default function Auth() {
     }
   };
 
-  const logout = async () => {
-    try {
-      await signOut(auth);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return (
     <div>
       <Button variant={"outline"} onClick={signInWithGoogle}>Sign in with Google</Button>
-      <Button onClick={logout}>logout</Button>
     </div>
   );
 }
