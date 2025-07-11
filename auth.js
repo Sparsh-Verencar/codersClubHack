@@ -12,7 +12,6 @@ export default function Auth() {
       console.error(err);
     }
   };
-
   return (
     <div>
       <Button variant={"outline"} onClick={signInWithGoogle}>Sign in with Google</Button>
