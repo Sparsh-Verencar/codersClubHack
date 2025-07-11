@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Auth from "../../auth";
+import { ModeToggle } from '@/components/ui/mode-toggle'
 import { auth } from "../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
