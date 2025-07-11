@@ -8,10 +8,22 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
 import Aurora from "@/components/Backgrounds/Aurora/Aurora";
 import ShinyText from "@/components/TextAnimations/ShinyText/ShinyText";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import {
+  IconArrowWaveRightUp,
+  IconBoxAlignRightFilled,
+  IconBoxAlignTopLeft,
+  IconClipboardCopy,
+  IconFileBroken,
+  IconSignature,
+  IconTableColumn,
+} from "@tabler/icons-react";
 
 export default function HomePage() {
-  const [user, loading] = useAuthState(auth);
   const router = useRouter();
+  const [user, loading] = useAuthState(auth);
 
   useEffect(() => {
     if (user && !loading) {
@@ -19,16 +31,51 @@ export default function HomePage() {
     }
   }, [user, loading, router]);
 
+  const Skeleton = () => (
+    <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100" />
+  );
+
+  const items = [
+    {
+      title: "The Dawn of Innovation",
+      description: "Explore the birth of groundbreaking ideas and inventions.",
+      header: <Image src="/holi.webp" width={300} height={300} alt="Holi Festival" />,
+      icon: <IconClipboardCopy className="h-4 w-4 text-neutral-500" />,
+    },
+    {
+      title: "The Digital Revolution",
+      description: "Dive into the transformative power of technology.",
+      header: <Image src="/africanTribe.webp" width={300} height={300} alt="African Tribe" />,
+      icon: <IconFileBroken className="h-4 w-4 text-neutral-500" />,
+    },
+    {
+      title: "The Art of Design",
+      description: "Discover the beauty of thoughtful and functional design.",
+      header: <Image src="/carnival.jpg" width={300} height={300} alt="Carnival" />,
+      icon: <IconSignature className="h-4 w-4 text-neutral-500" />,
+    },
+    {
+      title: "The Power of Communication",
+      description: "Understand the impact of effective communication in our lives.",
+      header: <Image src="/nunavut.webp" width={300} height={300} alt="Nunavut Culture" />,
+      icon: <IconTableColumn className="h-4 w-4 text-neutral-500" />,
+    },
+    {
+      title: "The Pursuit of Knowledge",
+      description: "Join the quest for understanding and enlightenment.",
+      header: <Image src="/japanese.webp" width={300} height={300} alt="Japanese Festival" />,
+      icon: <IconArrowWaveRightUp className="h-4 w-4 text-neutral-500" />,
+    },
+  ];
+
+  // Guard against rendering content during loading or redirect
+  if (loading) return <p className="text-center py-4">Loading...</p>;
+  if (user) return <p className="text-center py-4">Redirecting...</p>;
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Auth/Redirect */}
-      {loading ? (
-        <p className="text-center py-4">Loading...</p>
-      ) : user ? (
-        <p className="text-center py-4">Redirecting...</p>
-      ) : (
-        <Auth />
-      )}
+      {/* Auth Screen */}
+      <Auth />
 
       {/* Theme Toggle */}
       <div className="absolute top-4 right-4 z-50">
@@ -37,7 +84,6 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative flex flex-col items-center justify-center text-center px-4 md:px-20 py-20 overflow-hidden bg-gradient-to-b from-background via-muted to-background">
-        {/* Aurora Background */}
         <Aurora
           colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
           blend={0.5}
@@ -45,17 +91,16 @@ export default function HomePage() {
           speed={0.5}
         />
 
-        {/* Hero Content */}
         <div className="relative z-10 flex flex-col items-center justify-center">
           <h1 className="text-5xl md:text-6xl font-bold text-primary mb-4">
             FestivalSphere
           </h1>
-            <ShinyText text="Explore, discover, and experience festivals around the world.
-            Find your next adventure, from vibrant parades to hidden cultural gems." 
-            disabled={false} 
-            speed={30} 
-            className='text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto' />
-           
+          <ShinyText
+            text="Explore, discover, and experience festivals around the world. Find your next adventure, from vibrant parades to hidden cultural gems."
+            disabled={false}
+            speed={30}
+            className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
+          />
           <button className="px-6 py-3 bg-primary text-primary-foreground rounded-full text-base shadow hover:brightness-90 transition">
             Get Started
           </button>
@@ -67,30 +112,18 @@ export default function HomePage() {
         <h2 className="text-3xl font-semibold text-center text-primary mb-12">
           What We Offer
         </h2>
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {[
-            {
-              title: "Interactive Map",
-              desc: "Pinpoint festivals globally and plan your journey effortlessly.",
-            },
-            {
-              title: "Festival Calendar",
-              desc: "Keep track of festival dates, highlights, and updates.",
-            },
-            {
-              title: "Community Reviews",
-              desc: "Get real tips and stories from fellow festival explorers.",
-            },
-          ].map(({ title, desc }, idx) => (
-            <div
-              key={idx}
-              className="bg-muted rounded-xl p-6 border border-border shadow hover:shadow-md transition"
-            >
-              <h3 className="text-xl font-medium text-foreground mb-2">{title}</h3>
-              <p className="text-muted-foreground">{desc}</p>
-            </div>
+        <BentoGrid className="max-w-4xl mx-auto">
+          {items.map((item, i) => (
+            <BentoGridItem
+              key={i}
+              title={item.title}
+              description={item.description}
+              header={item.header}
+              icon={item.icon}
+              className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+            />
           ))}
-        </div>
+        </BentoGrid>
       </section>
 
       {/* Footer */}
