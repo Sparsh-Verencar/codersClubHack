@@ -158,12 +158,12 @@ export default function FestivalCalendar() {
         <div className="md:w-1/3 p-4 flex items-center justify-center">
           <Calendar selected={date} onSelect={handleDateSelect} mode="single" />
         </div>
-        <div className="md:w-2/3">
+        <div className="md:w-2/3 -z-0">
           <MapContainer center={[20.5937, 78.9629]} zoom={4} minZoom={2} // 👈 Limit how far you can zoom out
             maxZoom={10} style={{ height: '100%' }} maxBounds={[
-    [-90, -180],
-    [90, 180]
-  ]}>
+              [-90, -180],
+              [90, 180]
+            ]}>
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
               attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap contributors'
@@ -209,23 +209,35 @@ export default function FestivalCalendar() {
       {/* Modal */}
       {selectedFestival && (
         <div
-          className="fixed inset-0 bg-black/20 flex justify-center items-center z-50"
+          className="fixed inset-0 z-50 bg-black/40 overflow-auto flex justify-center items-center p-4"
           onClick={() => setSelectedFestival(null)}
         >
           <div
-            className="bg-white rounded-xl p-6 max-w-2xl w-11/12 shadow-lg relative"
-            onClick={e => e.stopPropagation()}
+            className="bg-card rounded-xl p-6 max-w-2xl w-full shadow-lg relative"
+            onClick={(e) => e.stopPropagation()}
           >
-            <button className="absolute top-4 right-4 text-2xl" onClick={() => setSelectedFestival(null)}>
+            <button
+              className="absolute top-4 right-4 text-2xl"
+              onClick={() => setSelectedFestival(null)}
+            >
               ✕
             </button>
-            <img src={selectedFestival.image} alt={selectedFestival.name} className="w-full h-64 object-cover rounded mb-4" />
+            <img
+              src={selectedFestival.image}
+              alt={selectedFestival.name}
+              className="w-full h-64 object-cover rounded mb-4"
+            />
             <h2 className="text-2xl font-bold mb-2">{selectedFestival.name}</h2>
-            <p><strong>Date:</strong> {selectedFestival.date}</p>
-            <p><strong>Location:</strong> {selectedFestival.coords.join(', ')}</p>
+            <p>
+              <strong>Date:</strong> {selectedFestival.date}
+            </p>
+            <p>
+              <strong>Location:</strong> {selectedFestival.coords.join(', ')}
+            </p>
             <p className="mt-2">{selectedFestival.description}</p>
           </div>
         </div>
+
       )}
     </>
   );
