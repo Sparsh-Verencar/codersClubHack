@@ -155,11 +155,15 @@ export default function FestivalCalendar() {
 
       {/* Calendar + Map */}
       <section className="flex flex-col md:flex-row h-[60vh]">
-        <div className="md:w-1/3 p-4">
+        <div className="md:w-1/3 p-4 flex items-center justify-center">
           <Calendar selected={date} onSelect={handleDateSelect} mode="single" />
         </div>
         <div className="md:w-2/3">
-          <MapContainer center={[20.5937, 78.9629]} zoom={4} style={{ height: '100%' }}>
+          <MapContainer center={[20.5937, 78.9629]} zoom={4} minZoom={2} // 👈 Limit how far you can zoom out
+            maxZoom={10} style={{ height: '100%' }} maxBounds={[
+    [-90, -180],
+    [90, 180]
+  ]}>
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
               attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap contributors'
@@ -174,7 +178,7 @@ export default function FestivalCalendar() {
       </section>
 
       {/* Festival Cards */}
-      <section className="p-4 bg-gray-200">
+      <section className="p-4 bg-background">
         <h2 className="text-xl font-semibold mb-4">
           {date ? `Festivals on ${date.toLocaleDateString()}` : 'Select a date'}
         </h2>
@@ -187,7 +191,7 @@ export default function FestivalCalendar() {
               <div
                 key={f.id}
                 onClick={() => setSelectedFestival(f)}
-                className="bg-white rounded-lg shadow cursor-pointer hover:shadow-xl"
+                className="bg-card rounded-lg shadow cursor-pointer hover:shadow-xl"
               >
                 <img src={f.image} alt={f.name} className="w-full h-32 object-cover" />
                 <div className="p-3">
