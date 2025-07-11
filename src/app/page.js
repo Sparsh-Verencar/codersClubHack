@@ -1,26 +1,27 @@
 'use client';
 
+import { useEffect } from "react";
 import Auth from "../../auth";
 import { auth } from "../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
-import { redirect } from "next/dist/server/api-utils";
-import { Button } from "@/components/ui/button";
-import { ModeToggle } from "@/components/ui/mode-toggle";
 
 export default function HomePage() {
   const [user, loading] = useAuthState(auth);
-  const router = useRouter()
-  const goToHome = () => {
-    router.push("/home")
-  }
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && !loading) {
+      router.push("/home"); // Redirect to /home after login
+    }
+  }, [user, loading, router]);
+
   return (
     <div>
-      {user ? (
-        <div>
-          <p>Welcome, {user.displayName}</p>
-          <Auth />
-        </div>
+      {loading ? (
+        <p>Loading...</p>
+      ) : user ? (
+        <p>Redirecting...</p> // Optional: user feedback
       ) : (
         <Auth />
       )}
