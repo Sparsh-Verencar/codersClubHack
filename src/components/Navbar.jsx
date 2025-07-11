@@ -30,7 +30,7 @@ const Navbar = () => {
 
       {/* Right Section - Toggle and Logout */}
       <div className="flex items-center gap-4">
-        <ModeToggle />
+        <ModeToggle/>
         <Button variant="outline" onClick={logout}>
           Logout
         </Button>
