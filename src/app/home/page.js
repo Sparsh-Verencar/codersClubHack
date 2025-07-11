@@ -196,9 +196,9 @@ export default function FestivalCalendar() {
                 <img src={f.image} alt={f.name} className="w-full h-32 object-cover" />
                 <div className="p-3">
                   <h3 className="text-lg font-bold">{f.name}</h3>
-                  <p className="text-sm text-gray-600">Date: {f.date}</p>
-                  <p className="text-sm text-gray-600">Location: {f.coords.join(', ')}</p>
-                  <p className="text-sm text-gray-800 mt-1">{f.description}</p>
+                  <p className="text-sm text-primary">Date: {f.date}</p>
+                  <p className="text-sm text-primary">Location: {f.coords.join(', ')}</p>
+                  <p className="text-sm text-primary mt-1">{f.description}</p>
                 </div>
               </div>
             ))}
