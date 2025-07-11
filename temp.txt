@@ -1,29 +1,4 @@
-"use client";
-
-import { useEffect } from "react";
-import Auth from "../../auth";
-import { ModeToggle } from '@/components/ui/mode-toggle';
-import { auth } from "../../firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter } from "next/navigation";
-import Aurora from "@/components/Backgrounds/Aurora/Aurora";
-import ShinyText from "@/components/TextAnimations/ShinyText/ShinyText";
-import Page from "@/app/home/page.js";
-
-export default function HomePage() {
-  const [user, loading] = useAuthState(auth);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (user && !loading) {
-      router.push("/home");
-    }
-  }, [user, loading, router]);
-
-  return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* <Page/> */}
-         Auth/Redirect
+   {/* Auth/Redirect
       {loading ? (
         <p className="text-center py-4">Loading...</p>
       ) : user ? (
@@ -32,7 +7,7 @@ export default function HomePage() {
         <Auth />
       )}
 
-      {/* Theme Toggle
+      {/* Theme Toggle */}
       <div className="absolute top-4 right-4 z-50">
         <ModeToggle />
       </div>
@@ -107,6 +82,3 @@ export default function HomePage() {
           &copy; {new Date().getFullYear()} FestivalSphere. All rights reserved.
         </p>
       </footer> 
-    </div>
-  );
-}
