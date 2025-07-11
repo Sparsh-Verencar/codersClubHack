@@ -13,7 +13,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (user && !loading) {
-      router.push("/home"); // Redirect to /home after login
+      router.push("/test"); // Redirect to /home after login
     }
   }, [user, loading, router]);
 
