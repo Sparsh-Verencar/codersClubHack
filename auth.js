@@ -24,7 +24,7 @@ export default function Auth() {
   return (
     <div>
       <Button variant={"outline"} onClick={signInWithGoogle}>Sign in with Google</Button>
-      <Button onClick={logout}>Sign in with Google</Button>
+      <Button onClick={logout}>logout</Button>
     </div>
   );
 }
