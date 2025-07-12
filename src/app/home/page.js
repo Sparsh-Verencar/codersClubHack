@@ -110,7 +110,8 @@ const fetchFromWikipedia = async (monthName, day, year) => {
   try {
     const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/html/${monthName}_${day}`);
     const html = await res.text();
-    const parser = new DOMParser();
+    if (typeof window === "undefined") return [];
+    const parser = new window.DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const heading = Array.from(doc.querySelectorAll('h2')).find(h => /Holidays and observances/i.test(h.textContent || ''));
     if (!heading) return [];
@@ -130,11 +131,11 @@ const fetchFromWikipedia = async (monthName, day, year) => {
           items.push({
             id: `wiki-${monthName}-${day}-${items.length}`,
             name,
-            date: `${year}-${String(new Date(`${monthName} 1`).getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
-            coords,
-            description: desc,
-            countryCode,
-            image,
+           date: `${year}-${String(new Date(`${monthName} 1`).getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+              coords,
+              description: desc,
+              countryCode,
+              image,
           });
         }
       }
@@ -161,7 +162,7 @@ export default function FestivalCalendar() {
     const month = selectedDate.getMonth() + 1;
     const day = selectedDate.getDate();
     const monthName = selectedDate.toLocaleDateString('en-US', { month: 'long' });
-    const isoDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const isoDate = `${ year } - ${ String(month).padStart(2, '0') } - ${ String(day).padStart(2, '0') }`;
 
     const hardcoded = hardcodedFestivalData.filter(f => f.date === isoDate).map(f => ({
       ...f,
@@ -217,7 +218,7 @@ export default function FestivalCalendar() {
 
       <section className="p-4 bg-background">
         <h2 className="text-xl font-semibold mb-4">
-          {date ? `Festivals on ${date.toLocaleDateString()}` : 'Select a date'}
+          {date ? `Festivals on ${ date.toLocaleDateString() }` : 'Select a date'}
         </h2>
 
         {loading ? (
