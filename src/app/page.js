@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Auth from "../../auth";
 import { ModeToggle } from '@/components/ui/mode-toggle';
-import { auth } from "../../firebase";
+import { auth, googleProvider } from "../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
 import Aurora from "@/components/Backgrounds/Aurora/Aurora";
@@ -20,7 +20,7 @@ import {
   IconSignature,
   IconTableColumn,
 } from "@tabler/icons-react";
-
+import { signInWithPopup } from "firebase/auth";
 export default function HomePage() {
   const router = useRouter();
   const [user, loading] = useAuthState(auth);
@@ -30,10 +30,6 @@ export default function HomePage() {
       router.push("/home");
     }
   }, [user, loading, router]);
-
-  const Skeleton = () => (
-    <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100" />
-  );
 
   const items = [
     {
@@ -72,10 +68,21 @@ export default function HomePage() {
   if (loading) return <p className="text-center py-4">Loading...</p>;
   if (user) return <p className="text-center py-4">Redirecting...</p>;
 
+  const signInWithGoogle = async () => {
+      try {
+        await signInWithPopup(auth, googleProvider);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
 
 
+      <div className="absolute top-4 left-4 z-50 flex items-center justify-center text-primary text-3xl">
+        FestivalSphere
+      </div>
       <div className="absolute top-4 right-4 z-50 flex items-center justify-center">
         <Auth />
         <ModeToggle />
@@ -100,7 +107,7 @@ export default function HomePage() {
             speed={30}
             className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
           />
-          <button className="px-6 py-3 bg-primary text-primary-foreground rounded-full text-base shadow hover:brightness-90 transition">
+          <button className="px-6 py-3 bg-primary text-primary-foreground rounded-full text-base shadow hover:brightness-90 transition" onClick={signInWithGoogle}>
             Get Started
           </button>
         </div>
@@ -130,7 +137,7 @@ export default function HomePage() {
         <p className="mb-4 text-muted-foreground">
           Ready to discover your next festival?
         </p>
-        <button className="px-6 py-3 bg-primary text-primary-foreground rounded-full text-base shadow hover:brightness-90 transition">
+        <button className="px-6 py-3 bg-primary text-primary-foreground rounded-full text-base shadow hover:brightness-90 transition" onClick={signInWithGoogle}>
           Join Now
         </button>
         <p className="mt-6 text-xs text-muted-foreground">

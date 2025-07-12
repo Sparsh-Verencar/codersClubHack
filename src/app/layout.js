@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Egghead project",
-  description: "Made for coders club hackathon",
+  title: "FestivalSphere",
+  description: "World is one",
 };
 
 export default function RootLayout({ children }) {
