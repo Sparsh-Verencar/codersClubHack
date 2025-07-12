@@ -1,5 +1,5 @@
 /*
-	Installed from https://reactbits.dev/tailwind/
+  Installed from https://reactbits.dev/tailwind/
 */
 
 import { Renderer, Program, Mesh, Color, Triangle } from "ogl";
@@ -148,7 +148,11 @@ export default function Aurora(props) {
         program.uniforms.uResolution.value = [width, height];
       }
     }
-    window.addEventListener("resize", resize);
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", resize);
+
+    }
+
 
     const geometry = new Triangle(gl);
     if (geometry.attributes.uv) {
@@ -195,7 +199,9 @@ export default function Aurora(props) {
 
     return () => {
       cancelAnimationFrame(animateId);
-      window.removeEventListener("resize", resize);
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", resize);
+      };
       if (ctn && gl.canvas.parentNode === ctn) {
         ctn.removeChild(gl.canvas);
       }

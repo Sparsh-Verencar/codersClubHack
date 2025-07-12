@@ -39,7 +39,7 @@ const geocodePlace = async (place) => {
   } catch (err) {
     console.error("Geocoding error:", err);
   }
-  return [20.5937, 78.9629]; // fallback to India
+  return [20.5937, 78.9629]; 
 };
 
 const reverseGeocodeCountryCode = async (lat, lon) => {
@@ -110,8 +110,10 @@ const fetchFromWikipedia = async (monthName, day, year) => {
   try {
     const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/html/${monthName}_${day}`);
     const html = await res.text();
-    if (typeof window === "undefined") return [];
-    const parser = new window.DOMParser();
+
+    if (typeof window === 'undefined') return [];
+
+    const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const heading = Array.from(doc.querySelectorAll('h2')).find(h => /Holidays and observances/i.test(h.textContent || ''));
     if (!heading) return [];
@@ -131,11 +133,11 @@ const fetchFromWikipedia = async (monthName, day, year) => {
           items.push({
             id: `wiki-${monthName}-${day}-${items.length}`,
             name,
-           date: `${year}-${String(new Date(`${monthName} 1`).getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
-              coords,
-              description: desc,
-              countryCode,
-              image,
+            date: `${year}-${String(new Date(`${monthName} 1`).getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+            coords,
+            description: desc,
+            countryCode,
+            image,
           });
         }
       }
@@ -147,6 +149,7 @@ const fetchFromWikipedia = async (monthName, day, year) => {
     return [];
   }
 };
+
 
 export default function FestivalCalendar() {
   const [date, setDate] = useState(null);

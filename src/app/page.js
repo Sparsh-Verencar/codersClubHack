@@ -64,7 +64,6 @@ export default function HomePage() {
     },
   ];
 
-  // Guard against rendering content during loading or redirect
   if (loading) return <p className="text-center py-4">Loading...</p>;
   if (user) return <p className="text-center py-4">Redirecting...</p>;
 
