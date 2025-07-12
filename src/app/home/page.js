@@ -259,11 +259,16 @@ export default function FestivalCalendar() {
               }}
             />
             <h2 className="text-2xl font-bold mb-2">{selectedFestival.name}</h2>
-            <p><strong>Date:</strong> {selectedFestival.date}</p>
-            <p><strong>Location:</strong> {selectedFestival.coords.join(', ')}</p>
+            <p>
+              <strong>Date:</strong> {selectedFestival.date}
+            </p>
+            <p>
+              <strong>Location:</strong> {selectedFestival.coords.join(', ')}
+            </p>
             <p className="mt-2">{selectedFestival.description}</p>
           </div>
         </div>
+
       )}
     </>
   );
