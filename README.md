@@ -24,17 +24,18 @@ _Explore, discover, and experience festivals around the world. Find your next ad
 
 ## About
 
-**Festival Sphere** lets you find out about events, festivals, and holidays anywhere in the world that’s been recorded. Pinpoint dates on an interactive map, read community reviews, and plan your next cultural adventure—all in one place.
+Festival Sphere
+lets you find out about events, festivals, and holidays anywhere in the world that’s been recorded. Pinpoint dates on an interactive map, read community reviews, and plan your next cultural adventure—all in one place.
 
 ---
 
 ## Features
 
-- 🎯 **Interactive Map**  
+- 🎯 Interactive Map  
   Pinpoint festivals globally and plan your journey effortlessly.  
-- 🗓️ **Festival Calendar**  
+- 🗓️ Festival Calendar  
   Keep track of festival dates, highlights, and updates.  
-- 💬 **Community Reviews**  
+- 💬 Community Reviews 
   Get real tips and stories from fellow festival explorers.  
 
 ---
@@ -101,31 +102,22 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 
 ## Screenshots
 
-![Homepage Map View](./assets/map-view.png)
+<p align="center">
+  <!-- Public folder in React/Next.js maps to `/` at runtime -->
+  <img src="./public/map.jpeg" alt="Map view of festivals" width="300" />
+</p>
 *Map-based festival explorer.*
 
-![Festival Modal](./assets/modal-view.png)
+<p align="center">
+  <img src="./public/modal.jpeg" alt="Festival detail modal" width="300" />
+</p>
 *Detailed festival info in a modal.*
 
-> 📸 **Pro tip:** Drop your actual screenshots in an `assets/` folder and update the paths above!
+## Landing Page
 
-
-## Roadmap
-
-* [x] MVP: Map + Calendar + Modal details
-* [ ] User authentication & profiles
-* [ ] Deploy to Vercel with CI/CD
-* [ ] Add filtering by region & festival type
-* [ ] Mobile‑friendly enhancements
-
-
-## Contributing
-
-1. Fork the repo
-2. Create a feature branch (`git checkout -b feature/YourFeature`)
-3. Commit your changes (`git commit -m "Add your feature"`)
-4. Push to your branch (`git push origin feature/YourFeature`)
-5. Open a Pull Request—let’s review! 🎉
+<p align="center">
+  <img src="./public/landing.jpeg" alt="Landing page screenshot" width="300" />
+</p>
 
 ---
 
