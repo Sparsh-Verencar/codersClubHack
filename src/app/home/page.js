@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/Navbar.jsx';
 import L from 'leaflet';
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton.jsx"
 
 const customIcon = new L.Icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
